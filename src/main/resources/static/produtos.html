@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="light">
+<head>
+  <meta charset="UTF-8">
+  <title>Embalando • Produtos Cadastrados</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #007bff;
+      --success: #28a745;
+      --error: #dc3545;
+      --bg-gradient: linear-gradient(to right, #f0f2f5, #dbe9f4);
+      --surface: #fff;
+      --text: #333;
+      --border: #ccc;
+      --shadow: rgba(0,0,0,0.08);
+      --transition: 0.3s;
+    }
+    [data-tema="dark"] {
+      --bg-gradient: #121212;
+      --surface: #1e1e1e;
+      --text: #f0f0f0;
+      --border: #444;
+      --shadow: rgba(255,255,255,0.05);
+    }
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body { display: flex; min-height: 100vh; font-family: 'Inter', sans-serif; background: var(--bg-gradient); color: var(--text); }
+
+    aside {
+      width: 260px;
+      background: var(--surface);
+      box-shadow: 2px 0 12px rgba(0,0,0,0.1);
+      padding: 2rem 1rem;
+      flex-direction: column;
+      border-right: 4px solid var(--error);
+    }
+    .logo { font-size: 1.75rem; font-weight: bold; color: var(--primary); text-align: center; margin-bottom: 2rem; }
+    nav { flex: 1; overflow-y: auto; }
+    .nav-section { margin-bottom: 1.5rem; }
+    .nav-section h2 { font-size: 1rem; margin-bottom: 0.75rem; color: var(--error); text-transform: uppercase; }
+    .nav-section ul { list-style: none; }
+    .nav-section li { margin-bottom: 0.5rem; }
+    .nav-section a { display: flex; align-items: center; text-decoration: none; color: var(--text); padding: 0.5rem; border-radius: 0.5rem; transition: background var(--transition), color var(--transition); }
+    .nav-section a:hover { background: var(--error); color: #fff; }
+    .nav-section i { margin-right: 0.75rem; color: var(--primary); }
+
+    .container { flex: 1; display: flex; flex-direction: column; }
+    header { background: var(--primary); color: #fff; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--error); }
+    header h1 { font-size: 1.5rem; display: flex; align-items: center; }
+    header h1 i { margin-right: 0.75rem; }
+    .controls button { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; transition: transform var(--transition); }
+    .controls button:hover { transform: rotate(20deg); }
+
+    main { padding: 2rem; }
+    .table-container { max-width: 1000px; margin: auto; background: var(--surface); padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 16px var(--shadow); }
+    .titulo-pagina { text-align: center; font-size: 1.25rem; font-weight: 600; color: var(--primary); margin-bottom: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; background: var(--surface); }
+    th,td { padding: 12px; border-bottom: 1px solid var(--border); }
+    th { background: var(--primary); color: #fff; text-align: left; }
+    tr:hover { background: #f1f9ff; }
+    input[type="text"], input[type="number"] { width: 95%; padding: 6px 8px; border: 1px solid var(--border); border-radius: 0.5rem; transition: border-color var(--transition); }
+    input:focus { border-color: var(--primary); outline: none; }
+    .btn { padding: 6px 10px; border: none; border-radius: 0.5rem; color: #fff; cursor: pointer; font-size: 0.9rem; transition: background var(--transition); }
+    .edit { background: #ffc107; } .edit:hover { background: #e0a800; }
+    .save { background: var(--success); } .save:hover { background: #218838; }
+    .delete { background: var(--error); } .delete:hover { background: #c82333; }
+    .msg { text-align: center; font-weight: 600; margin: 10px 0; padding: 0.75rem; border-radius: 0.5rem; display: none; }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body class="app-active">
+  <aside>
+    <div class="logo"><i class="fas fa-boxes-stacked"></i> Embalando</div>
+    <nav>
+      <div class="nav-section">
+        <h2>Menu</h2>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-house"></i>Painel</a></li>
+          <li><a href="cadastro-cliente.html"><i class="fas fa-user-plus"></i>Cadastrar Cliente</a></li>
+          <li><a href="clientes.html"><i class="fas fa-users"></i>Clientes</a></li>
+          <li><a href="cadastro-produto.html"><i class="fas fa-plus-square"></i>Cadastrar Produto</a></li>
+          <li><a href="produtos.html"><i class="fas fa-boxes-stacked"></i>Produtos</a></li>
+          <li><a href="cadastro-compra.html"><i class="fas fa-cart-plus"></i>Nova Compra</a></li>
+          <li><a href="compras.html"><i class="fas fa-receipt"></i>Compras</a></li>
+          <li><a href="embulindo.html"><i class="fas fa-sitemap"></i>A Rede</a></li>
+        </ul>
+      </div>
+    </nav>
+  </aside>
+
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-boxes-stacked"></i> Produtos Cadastrados</h1>
+      <div class="controls">
+        <button id="themeToggle" title="Alternar Tema"><i class="fas fa-moon"></i></button>
+      </div>
+    </header>
+    <main class="table-container">
+      <div class="titulo-pagina">Gerencie aqui todos os produtos cadastrados no sistema.</div>
+      <div id="mensagem" class="msg" aria-live="polite"></div>
+      <table id="tabelaProdutos">
+        <thead>
+          <tr><th>ID</th><th>Nome</th><th>Quantidade</th><th>Preço</th><th>Ações</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </main>
+  </div>
+
+  <script>
+    const html = document.documentElement;
+    html.setAttribute('data-tema', localStorage.getItem('tema') || 'light');
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const t = html.getAttribute('data-tema') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-tema', t);
+      localStorage.setItem('tema', t);
+      document.querySelector('#themeToggle i').className = t === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    });
+
+    const baseUrl = '/produtos';
+    const tbody = document.querySelector('#tabelaProdutos tbody');
+    function exibirMensagem(txt, tipo) {
+      const m = document.getElementById('mensagem');
+      m.textContent = txt; m.className = `msg ${tipo}`; m.style.display = 'block';
+      setTimeout(() => m.style.display = 'none', 3000);
+    }
+    function carregarProdutos() {
+      fetch(baseUrl).then(r => r.json()).then(data => {
+        tbody.innerHTML = '';
+        data.forEach(p => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${p.id}</td>
+            <td><input type="text" id="nome-${p.id}" value="${p.nome}" disabled></td>
+            <td><input type="number" id="quantidade-${p.id}" value="${p.quantidade}" disabled></td>
+            <td><input type="number" step="0.01" id="preco-${p.id}" value="${p.precoUnitario}" disabled></td>
+            <td>
+              <button class="btn edit" onclick="habilitarEdicao(${p.id})">Editar</button>
+              <button class="btn save" onclick="salvar(${p.id})" style="display:none">Salvar</button>
+              <button class="btn delete" onclick="deletar(${p.id})">Excluir</button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+    function habilitarEdicao(id) {
+      ['nome', 'quantidade', 'preco'].forEach(f => document.getElementById(`${f}-${id}`).disabled = false);
+      document.querySelector(`button.edit[onclick="habilitarEdicao(${id})"]`).style.display = 'none';
+      document.querySelector(`button.save[onclick="salvar(${id})"]`).style.display = 'inline-block';
+    }
+    function salvar(id) {
+      const nome = document.getElementById(`nome-${id}`).value.trim();
+      const qtd = parseInt(document.getElementById(`quantidade-${id}`).value);
+      const pr = parseFloat(document.getElementById(`preco-${id}`).value);
+      if (!nome || isNaN(qtd) || isNaN(pr)) return exibirMensagem('❌ Preencha todos os campos', 'error');
+      fetch(`${baseUrl}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, quantidade: qtd, precoUnitario: pr })
+      }).then(r => r.ok ? exibirMensagem('✅ Atualizado', 'success') : exibirMensagem('❌ Erro', 'error'))
+        .finally(carregarProdutos);
+    }
+    function deletar(id) {
+      if (confirm('Confirma exclusão?'))
+        fetch(`${baseUrl}/${id}`, { method: 'DELETE' })
+          .then(r => r.ok ? exibirMensagem('✅ Excluído', 'success') : exibirMensagem('❌ Erro', 'error'))
+          .finally(carregarProdutos);
+    }
+    carregarProdutos();
+  </script>
+</body>
+</html>

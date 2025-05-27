@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="light">
+<head>
+  <meta charset="UTF-8" />
+  <title>Embalando • Cadastro de Cliente</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #007bff;
+      --accent: #ff5722;
+      --bg: #f2f5f9;
+      --surface: #fff;
+      --text: #333;
+      --border: #ccc;
+      --shadow: rgba(0,0,0,0.08);
+      --transition: 0.3s;
+    }
+    [data-tema="dark"] {
+      --bg: #121212;
+      --surface: #1e1e1e;
+      --text: #f0f0f0;
+      --border: #444;
+      --shadow: rgba(255,255,255,0.05);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; }
+
+    aside {
+      width: 260px;
+      background: var(--surface);
+      box-shadow: 2px 0 12px rgba(0,0,0,0.1);
+      padding: 2rem 1rem;
+      flex-direction: column;
+      border-right: 4px solid var(--accent);
+      display: flex;
+      flex-shrink: 0;
+      height: 100vh;
+    }
+    .logo { font-size: 1.75rem; font-weight: bold; color: var(--primary); text-align: center; margin-bottom: 2rem; }
+    nav ul { list-style: none; padding: 0; }
+    nav li { margin-bottom: 0.75rem; }
+    nav a {
+      display: flex; align-items: center;
+      text-decoration: none; color: var(--text);
+      padding: 0.75rem; border-radius: 0.5rem;
+      transition: background var(--transition), color var(--transition);
+    }
+    nav a:hover { background: var(--accent); color: #fff; }
+    nav i { margin-right: 0.75rem; color: var(--primary); }
+
+    .container { flex: 1; display: flex; flex-direction: column; }
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    header h1 { font-size: 1.5rem; display: flex; align-items: center; }
+    header h1 i { margin-right: 0.75rem; }
+    .controls button {
+      background: none; border: none; color: #fff;
+      font-size: 1.25rem; cursor: pointer;
+      transition: transform var(--transition);
+    }
+    .controls button:hover { transform: rotate(20deg); }
+
+    main { max-width: 600px; margin: 2rem auto; padding: 1rem; }
+
+    .form-box {
+      background: var(--surface);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 16px var(--shadow);
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px);} to { opacity:1; transform:translateY(0);} }
+
+    h2 { text-align: center; margin-bottom: 1.5rem; color: var(--primary); font-size: 1.75rem; }
+    label { display: block; font-weight: 600; margin-top: 1rem; }
+    input {
+      width: 100%; padding: 0.75rem; margin-top: 0.5rem;
+      border: 1px solid var(--border); border-radius: 0.5rem;
+      font-size: 1rem; transition: border-color var(--transition);
+    }
+    input:focus { border-color: var(--primary); outline: none; }
+
+    button[type="submit"] {
+      width: 100%; padding: 1rem; margin-top: 1.5rem;
+      background: var(--primary); color: #fff;
+      border: none; border-radius: 0.5rem;
+      font-size: 1rem; cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+    }
+    button[type="submit"]:hover { background: var(--accent); transform: scale(1.02); }
+    button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    #mensagem {
+      margin-top: 1rem; text-align: center;
+      font-weight: 600; padding: 0.75rem; border-radius: 0.5rem;
+      display: none;
+    }
+    .success { background: #d4edda; color: #155724; }
+    .error   { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body data-tema="light">
+  <aside>
+    <div class="logo"><i class="fas fa-user-plus"></i> Embalando</div>
+    <nav>
+      <ul>
+        <li><a href="index.html"><i class="fas fa-home"></i>Início</a></li>
+        <li><a href="clientes.html"><i class="fas fa-users"></i>Clientes</a></li>
+        <li><a href="produtos.html"><i class="fas fa-box"></i>Produtos</a></li>
+        <li><a href="compras.html"><i class="fas fa-shopping-cart"></i>Compras</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-user-plus"></i> Cadastro de Cliente</h1>
+      <div class="controls">
+        <button id="themeToggle" title="Alternar Tema"><i class="fas fa-moon"></i></button>
+      </div>
+    </header>
+    <main>
+      <form id="formCliente" class="form-box">
+        <h2>Novo Cliente</h2>
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" required>
+
+        <label for="telefone">Telefone:</label>
+        <input type="text" id="telefone" required placeholder="(83) 91234-5678" pattern="\(\d{2}\) \d{5}-\d{4}" oninput="formatarTelefone(this)">
+
+        <label for="endereco">Endereço:</label>
+        <input type="text" id="endereco" required>
+
+        <button type="submit">Cadastrar Cliente</button>
+        <div id="mensagem" role="alert" aria-live="polite"></div>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    const html = document.documentElement;
+    html.setAttribute('data-tema', localStorage.getItem('tema') || 'light');
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const newTheme = html.getAttribute('data-tema') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-tema', newTheme);
+      localStorage.setItem('tema', newTheme);
+      document.querySelector('#themeToggle i').className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    });
+
+    document.getElementById('formCliente').addEventListener('submit', function(e) {
+      e.preventDefault(); cadastrarCliente();
+    });
+
+    function formatarTelefone(input) {
+      const val = input.value.replace(/\D/g, '').slice(0, 11);
+      const match = val.match(/(\d{2})(\d{5})(\d{4})/);
+      if (match) input.value = `(${match[1]}) ${match[2]}-${match[3]}`;
+    }
+
+    function cadastrarCliente() {
+      const nome = document.getElementById('nome');
+      const tel = document.getElementById('telefone');
+      const end = document.getElementById('endereco');
+
+      if (!nome.value.trim() || !tel.value.trim() || !end.value.trim()) {
+        return mostrarMensagem('❌ Preencha todos os campos', 'error');
+      }
+
+      const btn = document.querySelector('button[type="submit"]');
+      btn.disabled = true;
+
+      fetch('/clientes', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ nome: nome.value.trim(), telefone: tel.value.trim(), endereco: end.value.trim() })
+      })
+      .then(r => r.ok ? mostrarMensagem('✅ Cliente cadastrado', 'success') : mostrarMensagem('❌ Erro ao cadastrar', 'error'))
+      .catch(() => mostrarMensagem('❌ Falha de conexão', 'error'))
+      .finally(() => btn.disabled = false);
+    }
+
+    function mostrarMensagem(txt, tipo) {
+      const m = document.getElementById('mensagem');
+      m.textContent = txt; m.className = tipo; m.style.display = 'block';
+      setTimeout(() => m.style.display = 'none', 3000);
+    }
+  </script>
+</body>
+</html>

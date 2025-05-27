@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="light">
+<head>
+  <meta charset="UTF-8" />
+  <title>Embalando • Carrinho de Compras</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #007bff;
+      --accent: #ff5722;
+      --bg: #f2f5f9;
+      --surface: #fff;
+      --text: #333;
+      --border: #ddd;
+      --shadow: rgba(0,0,0,0.08);
+      --transition: 0.3s;
+    }
+    [data-tema="dark"] {
+      --bg: #121212;
+      --surface: #1e1e1e;
+      --text: #f0f0f0;
+      --border: #444;
+      --shadow: rgba(255,255,255,0.05);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { display: flex; flex-direction: column; min-height: 100vh; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+
+    header { background: var(--primary); color: #fff; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 1.5rem; display: flex; align-items: center; }
+    header h1 i { margin-right: 0.75rem; }
+    .controls button { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; transition: transform var(--transition); }
+    .controls button:hover { transform: rotate(20deg); }
+
+    .container { flex: 1; padding: 2rem; max-width: 700px; margin: auto; display: flex; flex-direction: column; }
+
+    #produtosContainer.loading { text-align: center; font-style: italic; color: var(--border); }
+
+    .form-box { background: var(--surface); padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 16px var(--shadow); }
+    .form-box h2 { text-align: center; margin-bottom: 1.5rem; color: var(--primary); font-size: 1.75rem; }
+    .produto-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg); border: 1px solid var(--border); border-radius: 0.5rem; margin-top: 0.75rem; }
+    .produto-item label { flex: 1; display: flex; align-items: center; gap: 0.5rem; }
+    .produto-item input[type="number"] { width: 60px; text-align: center; }
+    #total { font-weight: bold; font-size: 1.25rem; margin-top: 1.5rem; text-align: center; color: #155724; }
+    button[type="submit"] { width: 100%; padding: 1rem; margin-top: 1.5rem; background: var(--primary); color: #fff; border: none; border-radius: 0.5rem; font-size: 1rem; cursor: pointer; transition: background var(--transition), transform var(--transition); }
+    button[type="submit"]:hover { background: var(--accent); transform: scale(1.02); }
+    button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
+    .msg { margin-top: 1rem; text-align: center; font-weight: 600; padding: 0.75rem; border-radius: 0.5rem; display: none; }
+    .success { background: #d4edda; color: #155724; }
+    .error   { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><i class="fas fa-shopping-cart"></i> Carrinho de Compras</h1>
+    <div class="controls">
+      <button id="themeToggle" aria-label="Alternar Tema" title="Alternar Tema"><i class="fas fa-moon"></i></button>
+      <button id="exportBtn" aria-label="Exportar Carrinho como CSV" title="Exportar CSV"><i class="fas fa-file-csv"></i></button>
+      <button id="printBtn" aria-label="Imprimir Carrinho" title="Imprimir"><i class="fas fa-print"></i></button>
+    </div>
+  </header>
+
+  <div class="container">
+    <form id="cartForm" class="form-box">
+      <h2>Adicionar Produtos ao Carrinho</h2>
+      <label for="clienteId" style="margin-bottom: 1rem; display:block; font-weight:600;">
+        Selecionar Cliente:
+        <select id="clienteId" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; font-size: 1rem; margin-top: 0.5rem;">
+          <option value="">Carregando clientes...</option>
+        </select>
+      </label>
+      <div id="produtosContainer" class="loading">Carregando produtos...</div>
+      <div id="total">Total: R$ 0.00</div>
+      <button type="submit" disabled>Confirmar Carrinho</button>
+      <div id="mensagem" class="msg" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <script>
+  (function(){
+    const html = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', ()=>{
+      const novo = html.getAttribute('data-tema')==='dark'?'light':'dark';
+      html.setAttribute('data-tema',novo);
+      localStorage.setItem('tema',novo);
+    });
+
+    const produtosContainer = document.getElementById('produtosContainer');
+    const totalEl = document.getElementById('total');
+    const btnConfirm = document.querySelector('button[type="submit"]');
+    const msgEl = document.getElementById('mensagem');
+
+    function mostrarMensagem(txt,tipo){
+      msgEl.textContent = txt;
+      msgEl.className = `msg ${tipo}`;
+      msgEl.style.display = 'block';
+      setTimeout(()=>{ msgEl.style.display='none'; msgEl.className=''; },3000);
+    }
+
+    function atualizarTotal(){
+      let total=0;
+      document.querySelectorAll('.produto-item').forEach(item=>{
+        const chk=item.querySelector('input[type="checkbox"]');
+        const qtd=item.querySelector('input[type="number"]');
+        let val = parseInt(qtd.value,10);
+        if(isNaN(val) || val<1){ qtd.value = 1; val = 1; }
+        if(chk.checked) total += parseFloat(chk.dataset.preco)*val;
+      });
+      totalEl.textContent = `Total: R$ ${total.toFixed(2)}`;
+      btnConfirm.disabled = total === 0;
+    }
+
+    function createProdutoItem(p){
+      const div = document.createElement('div');
+      div.className = 'produto-item';
+      const label = document.createElement('label');
+      const chk = document.createElement('input');
+      chk.type = 'checkbox'; chk.dataset.preco = p.precoUnitario; chk.dataset.id = p.id;
+      chk.addEventListener('change', atualizarTotal);
+      label.appendChild(chk);
+      label.append(p.nome + ` — R$ ${p.precoUnitario.toFixed(2)}`);
+      const num = document.createElement('input');
+      num.type='number'; num.min='1'; num.value='1';
+      num.addEventListener('change', atualizarTotal);
+      div.appendChild(label);
+      div.appendChild(num);
+      return div;
+    }
+
+    function carregarProdutos(){
+      fetch('/produtos')
+        .then(r=>r.json())
+        .then(produtos=>{
+          produtosContainer.classList.remove('loading');
+          produtosContainer.innerHTML='';
+          produtos.forEach(p=> produtosContainer.appendChild(createProdutoItem(p)));
+        })
+        .catch(()=>{
+          produtosContainer.textContent = 'Erro ao carregar produtos.';
+          produtosContainer.classList.remove('loading');
+        });
+    }
+
+    function carregarClientes(){
+      fetch('/clientes')
+        .then(r=>r.json())
+        .then(clientes=>{
+          const select = document.getElementById('clienteId');
+          select.innerHTML = '<option value="">Selecione...</option>';
+          clientes.forEach(c=>{
+            const opt = document.createElement('option');
+            opt.value = c.id;
+            opt.textContent = `${c.nome} (ID ${c.id})`;
+            select.appendChild(opt);
+          });
+        })
+        .catch(()=>document.getElementById('clienteId').innerHTML = '<option value="">Erro ao carregar clientes</option>');
+    }
+
+    document.getElementById('cartForm').addEventListener('submit', e=>{
+      e.preventDefault();
+      const clienteId = document.getElementById('clienteId').value;
+      if (!clienteId) return mostrarMensagem('❌ Selecione um cliente','error');
+      const itens = [];
+      document.querySelectorAll('.produto-item').forEach(div=>{
+        const chk = div.querySelector('input[type="checkbox"]');
+        const qtd = parseInt(div.querySelector('input[type="number"]').value, 10);
+        const id = parseInt(chk.dataset.id);
+        if (chk.checked && !isNaN(qtd) && qtd > 0) itens.push({ produtoId: id, quantidade: qtd });
+      });
+      if (itens.length === 0) return mostrarMensagem('❌ Nenhum item selecionado','error');
+      fetch('/compras', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clienteId: parseInt(clienteId), itens })
+      })
+      .then(r => r.ok ? mostrarMensagem('✅ Compra realizada com sucesso','success') : mostrarMensagem('❌ Erro ao registrar compra','error'))
+      .catch(() => mostrarMensagem('❌ Erro na conexão com servidor','error'));
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', ()=>{
+      const rows = Array.from(document.querySelectorAll('.produto-item'));
+      let csv = 'Nome,Preço Unitário,Quantidade,Subtotal\n';
+      rows.forEach(div=>{
+        const nome = div.querySelector('label').innerText.split(' — ')[0];
+        const preco = parseFloat(div.querySelector('input[type="checkbox"]').dataset.preco);
+        const qtd = parseInt(div.querySelector('input[type="number"]').value,10);
+        const subtotal = (preco*qtd).toFixed(2);
+        csv += `${nome},${preco.toFixed(2)},${qtd},${subtotal}\n`;
+      });
+      const blob = new Blob([csv],{type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'carrinho.csv'; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('printBtn').addEventListener('click', ()=> window.print());
+
+    html.setAttribute('data-tema', localStorage.getItem('tema')||'light');
+    carregarProdutos();
+    carregarClientes();
+  })();
+  </script>
+</body>
+</html>

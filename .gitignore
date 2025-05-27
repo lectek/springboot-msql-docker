@@ -1,0 +1,20 @@
+# Ignorar a pasta de build do Maven
+target/
+
+# Ignorar arquivos compilados
+*.class
+*.jar
+*.war
+*.ear
+
+# Ignorar configurações da IDE
+*.iml
+.idea/
+.settings/
+bin/
+
+# Ignorar arquivos do sistema
+.DS_Store
+*.log
+
+

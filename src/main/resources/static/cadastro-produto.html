@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <title>Embalando • Cadastrar Produto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #007bff;
+      --accent: #ff5722;
+      --bg: #f0f2f5;
+      --surface: #ffffff;
+      --text: #333;
+      --border: #ccc;
+      --shadow: rgba(0,0,0,0.08);
+      --transition: 0.3s;
+    }
+    [data-theme="dark"] {
+      --bg: #121212;
+      --surface: #1e1e1e;
+      --text: #f0f0f0;
+      --border: #444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { display: flex; min-height: 100vh; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+
+    aside {
+      width: 260px;
+      background: var(--surface);
+      box-shadow: 2px 0 12px rgba(0,0,0,0.1);
+      padding: 2rem 1rem;
+      flex-direction: column;
+      border-right: 4px solid var(--accent);
+    }
+    .logo { font-size: 1.75rem; font-weight: bold; color: var(--primary); text-align: center; margin-bottom: 2rem; }
+    nav ul { list-style: none; }
+    nav li { margin-bottom: 1rem; }
+    nav a {
+      display: flex; align-items: center;
+      text-decoration: none; color: var(--text);
+      padding: 0.75rem; border-radius: 0.5rem;
+      transition: background var(--transition);
+    }
+    nav a:hover { background: var(--accent); color: #fff; }
+    nav i { margin-right: 0.75rem; color: var(--primary); }
+
+    .container { flex: 1; display: flex; flex-direction: column; }
+    header {
+      background: var(--primary); color: #fff;
+      padding: 1rem 1.5rem; display: flex;
+      justify-content: space-between; align-items: center;
+      border-bottom: 4px solid var(--accent);
+    }
+    header h1 i { margin-right: 0.75rem; }
+    .controls button { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; }
+    .controls button:hover { transform: rotate(20deg); }
+
+    main { padding: 2rem; max-width: 600px; margin: auto; }
+    h2 { color: var(--primary); text-align: center; margin-bottom: 2rem; }
+
+    form { display: flex; flex-direction: column; gap: 1.2rem; background: var(--surface); padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 16px var(--shadow); }
+    label { font-weight: 600; }
+    input {
+      padding: 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem;
+      font-size: 1rem; background: #fff;
+    }
+    button[type="submit"] {
+      background: var(--primary); color: #fff; border: none;
+      padding: 0.75rem; border-radius: 0.5rem; font-weight: bold;
+      cursor: pointer; transition: background var(--transition);
+    }
+    button[type="submit"]:hover { background: var(--accent); }
+
+    .whatsapp {
+      position: fixed; bottom: 1rem; right: 1rem;
+      background: #25D366; color: #fff; border-radius: 50%; padding: 1rem;
+      font-size: 1.75rem; text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body class="app-active">
+  <aside>
+    <div class="logo"><i class="fas fa-box"></i> Embalando</div>
+    <nav>
+      <ul>
+        <li><a href="index.html"><i class="fas fa-tachometer-alt"></i>Painel</a></li>
+        <li><a href="clientes.html"><i class="fas fa-users"></i>Clientes</a></li>
+        <li><a href="produtos.html"><i class="fas fa-boxes"></i>Produtos</a></li>
+        <li><a href="compras.html"><i class="fas fa-receipt"></i>Compras</a></li>
+        <li><a href="cadastro-produto.html"><i class="fas fa-plus-square"></i>Cadastrar Produto</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-plus-square"></i> Cadastro de Produto</h1>
+      <div class="controls">
+        <button id="themeToggle" title="Alternar Tema"><i class="fas fa-moon"></i></button>
+      </div>
+    </header>
+    <main>
+      <h2>Novo Produto</h2>
+      <form method="POST" action="/produtos">
+        <label for="nome">Nome do Produto</label>
+        <input type="text" name="nome" id="nome" required />
+
+        <label for="quantidade">Quantidade</label>
+        <input type="number" name="quantidade" id="quantidade" required />
+
+        <label for="preco">Preço Unitário</label>
+        <input type="number" name="precoUnitario" id="preco" step="0.01" required />
+
+        <button type="submit">Salvar Produto</button>
+      </form>
+    </main>
+  </div>
+
+  <a href="https://wa.me/5583996628753" class="whatsapp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+  <script>
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.querySelector('#themeToggle i').className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+    });
+  </script>
+</body>
+</html>
