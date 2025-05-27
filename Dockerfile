@@ -1,10 +1,10 @@
-# Etapa 1: build do projeto com Maven
+# Etapa 1 - build do projeto com Maven
 FROM maven:3.9.4-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
-# Etapa 2: imagem final com o JAR compilado
+# Etapa 2 - imagem final com o JAR compilado
 FROM eclipse-temurin:17
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
