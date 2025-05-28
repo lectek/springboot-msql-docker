@@ -1,20 +1,37 @@
-# Ignorar a pasta de build do Maven
-target/
+# === MAVEN ===
+/target/
+!.mvn/wrapper/maven-wrapper.jar
 
-# Ignorar arquivos compilados
+# === JAR, BUILD E LOGS ===
 *.class
 *.jar
 *.war
 *.ear
+*.log
 
-# Ignorar configurações da IDE
+# === CONFIGURAÇÕES DE IDE ===
 *.iml
 .idea/
+.vscode/
 .settings/
 bin/
 
-# Ignorar arquivos do sistema
+# === SISTEMA OPERACIONAL ===
 .DS_Store
-*.log
+Thumbs.db
 
+# === CERTIFICADOS (como o meukeystore.p12) ===
+*.p12
+*.jks
+*.pem
+*.crt
+*.key
 
+# === ARQUIVOS DE BACKUP TEMPORÁRIOS ===
+*.swp
+*.bak
+*.tmp
+
+# === CONFIGS PESSOAIS ===
+.env
+*.local
